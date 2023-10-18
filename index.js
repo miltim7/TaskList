@@ -1,4 +1,4 @@
-import { TASKS } from "./Assets/key";
+import { TASKS } from "./Assets/key.js";
 class Task {
     #id;
     #name;
@@ -51,6 +51,10 @@ class Task {
             this.#isCompleted = value;
         }
     }
+
+    delete() {
+
+    }
 }
 
 class TaskList {
@@ -60,14 +64,23 @@ class TaskList {
         this.#tasks = tasks;
     }
 
-    getAllTasks() {
-        return this.#tasks;
+    addTask() {
+
+    }
+
+    filterByStatus() {
+
+    }
+
+    sortByName() {
+
+    }
+
+    sortByDate() {
+
     }
 }
 
-function setStyle(element, style) {
-    element.style = style;
-}
 
 const addTaskButton = document.querySelector('.add-task-button');
 const main = document.querySelector('main');
@@ -76,6 +89,7 @@ main.appendChild(ul);
 let task;
 
 let tasks = JSON.parse(localStorage.getItem(TASKS)) || [];
+let taskList = new TaskList(tasks);
 tasks.forEach(task => {
     addTask(task);
 });
@@ -106,6 +120,18 @@ function addTask(task) {
     deleteIcon.className = 'bx bx-basket';
     h2.textContent = task.name;
 
+    deleteButton.addEventListener('click', () => {
+        const index = tasks.findIndex(t => t.id === task.id);
+
+        if (index !== -1) {
+            tasks.splice(index, 1);
+        }
+
+        ul.removeChild(li);
+
+        localStorage.setItem(TASKS, JSON.stringify(tasks));
+    })
+
     li.appendChild(taskDiv);
     taskDiv.appendChild(link);
     link.appendChild(h2);
@@ -117,8 +143,6 @@ function addTask(task) {
     div.appendChild(deleteButton);
     deleteButton.appendChild(deleteIcon);
     ul.appendChild(li);
-
-    return input;
 }
 
 function changeStatus(ul, tasks) {
@@ -202,7 +226,7 @@ addTaskButton.addEventListener('click', e => {
         }
 
         task = new Task(nameInput.value, descriptionTextArea.value);
-        
+
 
         const taskObject = {
             id: task.id,
