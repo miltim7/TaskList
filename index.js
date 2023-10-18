@@ -1,3 +1,4 @@
+import { TASKS } from "./Assets/key";
 class Task {
     #id;
     #name;
@@ -74,7 +75,7 @@ const ul = document.createElement('ul');
 main.appendChild(ul);
 let task;
 
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+let tasks = JSON.parse(localStorage.getItem(TASKS)) || [];
 tasks.forEach(task => {
     addTask(task);
 });
@@ -126,7 +127,7 @@ function changeStatus(ul, tasks) {
             const checkboxIndex = Array.from(ul.querySelectorAll('.status')).indexOf(e.target);
             if (checkboxIndex !== -1) {
                 tasks[checkboxIndex].isCompleted = e.target.checked;
-                localStorage.setItem('tasks', JSON.stringify(tasks));
+                localStorage.setItem(TASKS, JSON.stringify(tasks));
             }
         }
     });
@@ -201,6 +202,7 @@ addTaskButton.addEventListener('click', e => {
         }
 
         task = new Task(nameInput.value, descriptionTextArea.value);
+        
 
         const taskObject = {
             id: task.id,
@@ -211,7 +213,7 @@ addTaskButton.addEventListener('click', e => {
         }
 
         tasks.push(taskObject);
-        localStorage.setItem('tasks', JSON.stringify(tasks));
+        localStorage.setItem(TASKS, JSON.stringify(tasks));
         addTask(taskObject);
         form.style.display = 'none';
 
