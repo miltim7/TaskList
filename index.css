@@ -140,9 +140,9 @@ form input {
 }
 
 form textarea {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow: auto;
     margin-bottom: 30px;
 }
 

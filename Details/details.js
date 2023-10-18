@@ -14,7 +14,6 @@ console.log(task);
 const goBackButton = document.querySelector('button');
 goBackButton.addEventListener('click', function() {
     window.history.back();
-    console.log('clicked');
 })
 
 const main = document.querySelector('main');

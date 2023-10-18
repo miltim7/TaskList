@@ -1,0 +1,108 @@
+@import url(/Assets/reset.css);
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+form {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding-bottom: 20px;
+    border-radius: 20px 20px 20px 20px;
+    background-color: #c1c1c1;
+    width: 80%;
+    min-height: 600px;
+    max-height: 600px;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+form input {
+    margin: 30px 0;
+    height: 70px;
+}
+
+form textarea {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 30px;
+}
+
+form textarea,
+form input {
+    width: 90%;
+    font-size: 1.2rem;
+    border-radius: 0px 7px 7px 0;
+    padding: 15px;
+    resize: none;
+    border: none;
+}
+
+form input:focus,
+form textarea:focus {
+    background-color: #eee8e8;
+    outline: none;
+    transition: 0.3s ease;
+    box-shadow: -5px 0 0.5px 0 #916357;
+}
+
+form p {
+    color: #007c29;
+    font-weight: lighter;
+    font-size: 2rem;
+    margin-top: 20px;
+}
+
+.form-save-task {
+    width: 90%;
+    cursor: pointer;
+    padding: 15px 0;
+    border: none;
+    transition: 0.3s ease;
+    background-color: #007c29;
+    color: #ffffff;
+    border-radius: 6px;
+}
+
+.form-save-task:hover {
+    background-color: #00521b;
+    color: #ffffff;
+}
+
+.form-save-task:active {
+    background-color: #003b14;
+}
+
+.goback {
+    width: 80%;
+    cursor: pointer;
+    padding: 20px;
+    background-color: #916357;
+    margin-top: 10px;
+    border-radius: 20px;
+    color: #ffffff;
+    transition: 0.4s ease;
+    font-size: 1.1em;
+}
+
+form textarea {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow: auto;
+    margin-bottom: 30px;
+}
+
+.goback:hover {
+    background-color: #795d56;
+}
+
+.goback:active {
+    background-color: #6d4c46;
+}

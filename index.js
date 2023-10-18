@@ -98,7 +98,7 @@ function addTask(task) {
     const taskDiv = document.createElement('div');
     taskDiv.className = 'task';
     const link = document.createElement('a');
-    link.href = `Details/details.html?id=${task.id}`;
+    link.href = `/Details/details.html?id=${task.id}`;
     const h2 = document.createElement('h2');
     const div = document.createElement('div');
     const label = document.createElement('label');
@@ -108,6 +108,8 @@ function addTask(task) {
     input.name = `status`;
     input.className = 'status';
     input.checked = task.isCompleted;
+    const editLink = document.createElement('a');
+    editLink.href = `/Edit/edit.html?id=${task.id}`;
     const editButton = document.createElement('button');
     editButton.className = 'edit';
     const editIcon = document.createElement('i');
@@ -126,14 +128,15 @@ function addTask(task) {
         ul.removeChild(li);
         localStorage.setItem(TASKS, JSON.stringify(tasks));
     })
-
+    
     li.appendChild(taskDiv);
     taskDiv.appendChild(link);
     link.appendChild(h2);
     taskDiv.appendChild(div);
     div.appendChild(label);
     div.appendChild(input);
-    div.appendChild(editButton);
+    editLink.appendChild(editButton);
+    div.appendChild(editLink);
     editButton.appendChild(editIcon);
     div.appendChild(deleteButton);
     deleteButton.appendChild(deleteIcon);
