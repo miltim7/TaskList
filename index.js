@@ -81,7 +81,6 @@ class TaskList {
     }
 }
 
-
 const addTaskButton = document.querySelector('.add-task-button');
 const main = document.querySelector('main');
 const ul = document.createElement('ul');
@@ -99,8 +98,7 @@ function addTask(task) {
     const taskDiv = document.createElement('div');
     taskDiv.className = 'task';
     const link = document.createElement('a');
-    link.href = 'Edit/edit.html';
-    link.target = '_blank';
+    link.href = `Details/details.html?id=${task.id}`;
     const h2 = document.createElement('h2');
     const div = document.createElement('div');
     const label = document.createElement('label');
@@ -122,13 +120,10 @@ function addTask(task) {
 
     deleteButton.addEventListener('click', () => {
         const index = tasks.findIndex(t => t.id === task.id);
-
         if (index !== -1) {
             tasks.splice(index, 1);
         }
-
         ul.removeChild(li);
-
         localStorage.setItem(TASKS, JSON.stringify(tasks));
     })
 

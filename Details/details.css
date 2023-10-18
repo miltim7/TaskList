@@ -1,0 +1,62 @@
+@import url(/Assets/reset.css);
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    color: #ffffff;
+}
+
+h1 {
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+p {
+    margin-bottom: 30px;
+    font-size: 1.3rem;
+}
+
+p:before {
+    color: #87eb8a;
+    font-weight: bold;
+}
+
+p:nth-child(1):before {
+    content: "ID: ";
+}
+
+p:nth-child(2):before {
+    content: "Completed: ";
+}
+
+p:nth-child(3):before {
+    content: "Creation Date: ";
+}
+
+p:nth-child(4):before {
+    content: "Name: ";
+}
+
+p:nth-child(5):before {
+    content: "Description: ";
+}
+
+main div {
+    width: 95%;
+    border-radius: 50px;
+    padding: 40px 40px;
+    background-color: #8C6C65;
+}
+
+button {
+    cursor: pointer;
+    padding: 10px;
+    width: 95%;
+    background-color: #8C6C65;
+    border-radius: 10px;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
