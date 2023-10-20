@@ -159,6 +159,34 @@ window.addEventListener('load', () => {
     changeStatus(ul, tasks);
 });
 
+const filterByStatus = document.querySelector('.filter-by-status');
+const sortByName = document.querySelector('.sort-by-name');
+const sortByDate = document.querySelector('.sort-by-date');
+
+sortByDate.addEventListener('click', () => {
+    console.log('sort by date clicked');
+    tasks.sort((a, b) => {
+        const dateA = new Date(a.creationDate);
+        const dateB = new Date(b.creationDate);
+        
+        if (dateA < dateB) {
+            return -1;
+        } else if (dateA > dateB) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
+
+    ul.innerHTML = '';
+
+    for (let i = tasks.length - 1; i >= 0; i--) {
+        addTask(tasks[i]);
+    }
+
+    localStorage.setItem(TASKS, JSON.stringify(tasks));
+})
+
 addTaskButton.addEventListener('click', e => {
     e.preventDefault();
     const form = document.createElement('form');
@@ -193,13 +221,14 @@ addTaskButton.addEventListener('click', e => {
     form.appendChild(descriptionTextArea);
     form.appendChild(saveButton);
 
+    
     closeButton.addEventListener('click', () => {
         form.style.display = 'none';
     })
 
     saveButton.addEventListener('click', e => {
         e.preventDefault();
-
+        
         nameInput.value = nameInput.value.trim();
         if (nameInput.value === '') {
             alert('Enter Name!');
@@ -211,12 +240,12 @@ addTaskButton.addEventListener('click', e => {
             alert('Enter Description!');
             return;
         }
-
+        
         if (nameInput.value.length > 30) {
             alert('Too long name! < 25 characters!')
             return;
         }
-
+        
         const namePattern = /^[A-Za-z0-9_]+$/;
         if (!namePattern.test(nameInput.value)) {
             alert('Enter Correct Name!');
@@ -224,8 +253,8 @@ addTaskButton.addEventListener('click', e => {
         }
 
         task = new Task(nameInput.value, descriptionTextArea.value);
-
-
+        
+        
         const taskObject = {
             id: task.id,
             name: task.name,
@@ -233,12 +262,12 @@ addTaskButton.addEventListener('click', e => {
             creationDate: task.creationDate,
             isCompleted: task.isCompleted
         }
-
+        
         tasks.push(taskObject);
         localStorage.setItem(TASKS, JSON.stringify(tasks));
         addTask(taskObject);
         form.style.display = 'none';
-
+        
         changeStatus(ul, tasks);
     })
 })

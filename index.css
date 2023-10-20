@@ -7,6 +7,27 @@ main {
     align-items: center;
 }
 
+.sort-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+} 
+
+.sort-div button {
+    padding: 10px;
+    background-color: #916357;
+    color: #ffffff;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.sort-div button:hover {
+    background-color: #5a3a33;
+}
+
 .add-task-button {
     margin: 10px 10px;
     width: 80%;
