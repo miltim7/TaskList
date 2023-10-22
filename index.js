@@ -103,24 +103,83 @@ class TaskList {
     }
 
     filterRemainded() {
+        const arr = [];
 
+        tasks.forEach(task => {
+            if (task.isCompleted !== true) {
+                arr.push(task);
+            }
+        })
+
+        ul.innerHTML = '';
+
+        arr.forEach(task => {
+            addTask(task);
+        });
+
+        this.checkSorts(arr);
     }
 
     filterAll() {
+        const arr = [...tasks];
 
+        ul.innerHTML = '';
+
+        arr.forEach(task => {
+            addTask(task);
+        });
+
+        this.checkSorts();
     }
 
     filterDone() {
+        const arr = [];
+        tasks.forEach(task => {
+            if (task.isCompleted === true) {
+                arr.push(task);
+            }
+        })
 
+        ul.innerHTML = '';
+
+        arr.forEach(task => {
+            addTask(task);
+        });
+
+        this.checkSorts();
     }
 
     sortByName() {
+        const arr = [...tasks];
+        arr.sort((a, b) => {
+            return a.name.localeCompare(b.name);
+        });
+        ul.innerHTML = '';
+        arr.forEach(task => {
+            addTask(task);
+        });
 
+        this.checkFilters();
     }
 
     sortByDate() {
-
+        const arr = [...tasks];
+        arr.sort(function (a, b) {
+            return parseDate(a.creationDate) - parseDate(b.creationDate);
+        });
+        ul.innerHTML = '';
+        for (let i = arr.length - 1; i >= 0; i--) {
+            addTask(arr[i]);
+        }
+        this.checkFilters();
     }
+}
+
+function parseDate(dateStr) {
+    var parts = dateStr.split(" ");
+    var dateParts = parts[0].split(".");
+    var timeParts = parts[1].split(":");
+    return new Date(dateParts[2], dateParts[1] - 1, dateParts[0], timeParts[0], timeParts[1], timeParts[2]);
 }
 
 const addTaskButton = document.querySelector('.add-task-button');
@@ -199,6 +258,26 @@ const filterAll = document.querySelector('.filter-all');
 
 const sortByName = document.querySelector('.sort-by-name');
 const sortByDate = document.querySelector('.sort-by-date');
+
+filterDone.addEventListener('click', () => {
+    taskList.filterDone();
+})
+
+filterRemainded.addEventListener('click', () => {
+    taskList.filterRemainded();
+})
+
+filterAll.addEventListener('click', () => {
+    taskList.filterAll();
+})
+
+sortByName.addEventListener('click', () => {
+    taskList.sortByName();
+})
+
+sortByDate.addEventListener('click', () => {
+    taskList.sortByDate();
+})
 
 addTaskButton.addEventListener('click', e => {
     e.preventDefault();
