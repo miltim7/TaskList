@@ -60,12 +60,25 @@ class Task {
 class TaskList {
     #tasks = [];
 
+    constructor() {
+        this.#tasks = JSON.parse(localStorage.getItem(TASKS)) || [];
+    }
+
     get tasks() {
         return this.#tasks;
     }
 
     addTask(task) {
         this.#tasks.push(task);
+    }
+
+    deleteTask(task) {
+        const index = tasks.findIndex(t => t.id === task.id);
+        if (index !== -1) {
+            tasks.splice(index, 1);
+        }
+        localStorage.setItem(TASKS, JSON.stringify(tasks));
+        location.reload();
     }
 
     checkSorts() {
@@ -148,12 +161,7 @@ function addTask(task) {
     h2.textContent = task.name;
 
     deleteButton.addEventListener('click', () => {
-        const index = tasks.findIndex(t => t.id === task.id);
-        if (index !== -1) {
-            tasks.splice(index, 1);
-        }
-        ul.removeChild(li);
-        localStorage.setItem(TASKS, JSON.stringify(tasks));
+        taskList.deleteTask(task);
     })
 
     li.appendChild(taskDiv);
@@ -268,7 +276,7 @@ addTaskButton.addEventListener('click', e => {
         }
 
         tasks.push(taskObject);
-        taskList.addTask(task);
+        taskList.addTask(taskObject);
         localStorage.setItem(TASKS, JSON.stringify(tasks));
         addTask(taskObject);
         form.style.display = 'none';
