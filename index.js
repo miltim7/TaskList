@@ -51,10 +51,6 @@ class Task {
             this.#isCompleted = value;
         }
     }
-
-    delete() {
-
-    }
 }
 
 class TaskList {
@@ -81,28 +77,17 @@ class TaskList {
         location.reload();
     }
 
-    checkSorts() {
-        if (sortByName.checked) {
-            sortByName();
-        }
-        else if (sortByDate.checked) {
-            sortByDate();
-        }
-    }
+    filterAll() {
+        changeStatus();
+        ul.innerHTML = '';
 
-    checkFilters() {
-        if (filterAll.checked) {
-            filterAll();
-        }
-        else if (filterRemainded.checked) {
-            filterRemainded();
-        }
-        else if (filterDone.checked) {
-            filterDone();
-        }
+        tasks.forEach(task => {
+            addTask(task);
+        });
     }
 
     filterRemainded() {
+        changeStatus();
         const arr = [];
 
         tasks.forEach(task => {
@@ -113,27 +98,27 @@ class TaskList {
 
         ul.innerHTML = '';
 
+        if (sortByName.checked) {
+            arr.sort((a, b) => {
+                return a.name.localeCompare(b.name);
+            });
+        }
+        if (sortByDate.checked) {
+            arr.sort(function (a, b) {
+                return parseDate(a.creationDate) - parseDate(b.creationDate);
+            });
+        }
+
         arr.forEach(task => {
             addTask(task);
         });
-
-        this.checkSorts(arr);
     }
 
-    filterAll() {
-        const arr = [...tasks];
-
-        ul.innerHTML = '';
-
-        arr.forEach(task => {
-            addTask(task);
-        });
-
-        this.checkSorts();
-    }
-
+    
     filterDone() {
+        changeStatus();
         const arr = [];
+
         tasks.forEach(task => {
             if (task.isCompleted === true) {
                 arr.push(task);
@@ -142,36 +127,78 @@ class TaskList {
 
         ul.innerHTML = '';
 
+        if (sortByName.checked) {
+            arr.sort((a, b) => {
+                return a.name.localeCompare(b.name);
+            });
+        }
+        if (sortByDate.checked) {
+            arr.sort(function (a, b) {
+                return parseDate(a.creationDate) - parseDate(b.creationDate);
+            });
+        }
+
         arr.forEach(task => {
             addTask(task);
         });
-
-        this.checkSorts();
     }
 
     sortByName() {
         const arr = [...tasks];
+
         arr.sort((a, b) => {
             return a.name.localeCompare(b.name);
         });
+
         ul.innerHTML = '';
+
+        if (filterDone.checked) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].isCompleted === false) {
+                    arr.splice(i, 1);
+                }
+            }
+        }
+        if (filterRemainded.checked) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].isCompleted === true) {
+                    arr.splice(i, 1);
+                }
+            }
+        }
+
         arr.forEach(task => {
             addTask(task);
         });
-
-        this.checkFilters();
     }
 
     sortByDate() {
         const arr = [...tasks];
+
         arr.sort(function (a, b) {
             return parseDate(a.creationDate) - parseDate(b.creationDate);
         });
+        
         ul.innerHTML = '';
+
+        if (filterDone.checked) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].isCompleted === false) {
+                    arr.splice(i, 1);
+                }
+            }
+        }
+        if (filterRemainded.checked) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].isCompleted === true) {
+                    arr.splice(i, 1);
+                }
+            }
+        }
+        
         for (let i = arr.length - 1; i >= 0; i--) {
             addTask(arr[i]);
         }
-        this.checkFilters();
     }
 }
 
@@ -236,7 +263,7 @@ function addTask(task) {
     ul.appendChild(li);
 }
 
-function changeStatus(ul, tasks) {
+function changeStatus() {
     ul.addEventListener('change', (e) => {
         if (e.target.classList.contains('status')) {
             const checkboxIndex = Array.from(ul.querySelectorAll('.status')).indexOf(e.target);
@@ -249,7 +276,7 @@ function changeStatus(ul, tasks) {
 }
 
 window.addEventListener('load', () => {
-    changeStatus(ul, tasks);
+    changeStatus();
 });
 
 const filterDone = document.querySelector('.filter-done');
@@ -360,6 +387,6 @@ addTaskButton.addEventListener('click', e => {
         addTask(taskObject);
         form.style.display = 'none';
 
-        changeStatus(ul, tasks);
+        changeStatus();
     })
 })

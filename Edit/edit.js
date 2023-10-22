@@ -9,6 +9,10 @@ const tasks = JSON.parse(localStorage.getItem(TASKS));
 
 const task = tasks.find(task => task[key] === value);
 
+if (task === undefined) {
+    document.body.innerHTML = '<div style="font-size: 150px;">444</div>';
+}
+
 const main = document.querySelector('main');
 const form = document.createElement('form');
 const div = document.createElement('div');
