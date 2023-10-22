@@ -7,27 +7,6 @@ main {
     align-items: center;
 }
 
-.sort-div {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 80%;
-} 
-
-.sort-div button {
-    padding: 10px;
-    background-color: #916357;
-    color: #ffffff;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-bottom: 10px;
-}
-
-.sort-div button:hover {
-    background-color: #5a3a33;
-}
-
 .add-task-button {
     margin: 10px 10px;
     width: 80%;
@@ -242,4 +221,35 @@ form p {
 
 .form-save-task:active {
     background-color: #003b14;
+}
+
+
+.sort-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 80%;
+} 
+
+.filters,
+.sorts {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.filters div,
+.sorts div {
+    display: flex;
+    flex-direction: column;
+    margin-right: 100px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.filters div input,
+.sorts div input {
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
 }

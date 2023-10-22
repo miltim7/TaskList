@@ -12,9 +12,35 @@
     <main>
         <button class="add-task-button">Create Task</button>
         <div class="sort-div">
-            <button class="filter-by-status">Filter By Status</button>
-            <button class="sort-by-name">Sort By Name</button>
-            <button class="sort-by-date">Sort By Date</button>
+            <div class="filters">
+                <div>
+                    <label for="all">All</label>
+                    <input id="all" class="filter-all" type="radio" name="filter">
+                </div>
+
+                <div>
+                    <label for="done">Done</label>
+                    <input id="done" class="filter-done" type="radio" name="filter">
+                </div>
+
+                <div>
+                    <label for="remainded">Remainded</label>
+                    <input id="remainded" class="filter-remainded" type="radio" name="filter">
+                </div>
+            </div>
+
+            <div class="sorts">
+                <div>
+                    <label for="sort-name">Sort By Name</label>
+                    <input id="sort-name" class="sort-by-name" type="radio" name="sort">
+                </div>
+
+                <div>
+                    <label for="sort-date">Sort By Date</label>
+                    <input id="sort-date" class="sort-by-date" type="radio" name="sort">
+                </div>
+            </div>
+
         </div>
     </main>
 </body>

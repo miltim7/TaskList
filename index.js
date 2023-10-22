@@ -58,17 +58,46 @@ class Task {
 }
 
 class TaskList {
-    #tasks;
+    #tasks = [];
 
-    constructor(tasks) {
-        this.#tasks = tasks;
+    get tasks() {
+        return this.#tasks;
     }
 
-    addTask() {
+    addTask(task) {
+        this.#tasks.push(task);
+    }
+
+    checkSorts() {
+        if (sortByName.checked) {
+            sortByName();
+        }
+        else if (sortByDate.checked) {
+            sortByDate();
+        }
+    }
+
+    checkFilters() {
+        if (filterAll.checked) {
+            filterAll();
+        }
+        else if (filterRemainded.checked) {
+            filterRemainded();
+        }
+        else if (filterDone.checked) {
+            filterDone();
+        }
+    }
+
+    filterRemainded() {
 
     }
 
-    filterByStatus() {
+    filterAll() {
+
+    }
+
+    filterDone() {
 
     }
 
@@ -88,7 +117,7 @@ main.appendChild(ul);
 let task;
 
 let tasks = JSON.parse(localStorage.getItem(TASKS)) || [];
-let taskList = new TaskList(tasks);
+let taskList = new TaskList();
 tasks.forEach(task => {
     addTask(task);
 });
@@ -101,8 +130,6 @@ function addTask(task) {
     link.href = `/Details/details.html?id=${task.id}`;
     const h2 = document.createElement('h2');
     const div = document.createElement('div');
-    const label = document.createElement('label');
-    label.textContent = 'Status';
     const input = document.createElement('input');
     input.type = 'checkbox';
     input.name = `status`;
@@ -128,12 +155,11 @@ function addTask(task) {
         ul.removeChild(li);
         localStorage.setItem(TASKS, JSON.stringify(tasks));
     })
-    
+
     li.appendChild(taskDiv);
     taskDiv.appendChild(link);
     link.appendChild(h2);
     taskDiv.appendChild(div);
-    div.appendChild(label);
     div.appendChild(input);
     editLink.appendChild(editButton);
     div.appendChild(editLink);
@@ -159,33 +185,12 @@ window.addEventListener('load', () => {
     changeStatus(ul, tasks);
 });
 
-const filterByStatus = document.querySelector('.filter-by-status');
+const filterDone = document.querySelector('.filter-done');
+const filterRemainded = document.querySelector('.filter-remainded');
+const filterAll = document.querySelector('.filter-all');
+
 const sortByName = document.querySelector('.sort-by-name');
 const sortByDate = document.querySelector('.sort-by-date');
-
-sortByDate.addEventListener('click', () => {
-    console.log('sort by date clicked');
-    tasks.sort((a, b) => {
-        const dateA = new Date(a.creationDate);
-        const dateB = new Date(b.creationDate);
-        
-        if (dateA < dateB) {
-            return -1;
-        } else if (dateA > dateB) {
-            return 1;
-        } else {
-            return 0;
-        }
-    });
-
-    ul.innerHTML = '';
-
-    for (let i = tasks.length - 1; i >= 0; i--) {
-        addTask(tasks[i]);
-    }
-
-    localStorage.setItem(TASKS, JSON.stringify(tasks));
-})
 
 addTaskButton.addEventListener('click', e => {
     e.preventDefault();
@@ -221,14 +226,14 @@ addTaskButton.addEventListener('click', e => {
     form.appendChild(descriptionTextArea);
     form.appendChild(saveButton);
 
-    
+
     closeButton.addEventListener('click', () => {
         form.style.display = 'none';
     })
 
     saveButton.addEventListener('click', e => {
         e.preventDefault();
-        
+
         nameInput.value = nameInput.value.trim();
         if (nameInput.value === '') {
             alert('Enter Name!');
@@ -240,12 +245,12 @@ addTaskButton.addEventListener('click', e => {
             alert('Enter Description!');
             return;
         }
-        
+
         if (nameInput.value.length > 30) {
             alert('Too long name! < 25 characters!')
             return;
         }
-        
+
         const namePattern = /^[A-Za-z0-9_]+$/;
         if (!namePattern.test(nameInput.value)) {
             alert('Enter Correct Name!');
@@ -253,8 +258,7 @@ addTaskButton.addEventListener('click', e => {
         }
 
         task = new Task(nameInput.value, descriptionTextArea.value);
-        
-        
+
         const taskObject = {
             id: task.id,
             name: task.name,
@@ -262,12 +266,13 @@ addTaskButton.addEventListener('click', e => {
             creationDate: task.creationDate,
             isCompleted: task.isCompleted
         }
-        
+
         tasks.push(taskObject);
+        taskList.addTask(task);
         localStorage.setItem(TASKS, JSON.stringify(tasks));
         addTask(taskObject);
         form.style.display = 'none';
-        
+
         changeStatus(ul, tasks);
     })
 })
