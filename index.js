@@ -114,7 +114,7 @@ class TaskList {
         });
     }
 
-    
+
     filterDone() {
         changeStatus();
         const arr = [];
@@ -178,7 +178,7 @@ class TaskList {
         arr.sort(function (a, b) {
             return parseDate(a.creationDate) - parseDate(b.creationDate);
         });
-        
+
         ul.innerHTML = '';
 
         if (filterDone.checked) {
@@ -195,7 +195,7 @@ class TaskList {
                 }
             }
         }
-        
+
         for (let i = arr.length - 1; i >= 0; i--) {
             addTask(arr[i]);
         }
@@ -319,7 +319,7 @@ addTaskButton.addEventListener('click', e => {
     p.textContent = 'Creating Task';
 
     const nameInput = document.createElement('input');
-    nameInput.maxLength = '25';
+    nameInput.maxLength = '33';
     nameInput.placeholder = 'Task Name';
     nameInput.type = 'text';
 
@@ -348,45 +348,75 @@ addTaskButton.addEventListener('click', e => {
     saveButton.addEventListener('click', e => {
         e.preventDefault();
 
-        nameInput.value = nameInput.value.trim();
-        if (nameInput.value === '') {
-            alert('Enter Name!');
-            return;
+        if (validateName(nameInput.value) && validateDescription(descriptionTextArea.value)) {
+            if (nameInput.value === descriptionTextArea.value) {
+                alert('Name and Description can not be same!');
+                return;
+            }
+
+            task = new Task(nameInput.value, descriptionTextArea.value);
+    
+            const taskObject = {
+                id: task.id,
+                name: task.name,
+                description: task.description,
+                creationDate: task.creationDate,
+                isCompleted: task.isCompleted
+            }
+    
+            tasks.push(taskObject);
+            taskList.addTask(taskObject);
+            localStorage.setItem(TASKS, JSON.stringify(tasks));
+            addTask(taskObject);
+            form.style.display = 'none';
+    
+            changeStatus();
         }
-
-        descriptionTextArea.value = descriptionTextArea.value.trim();
-        if (descriptionTextArea.value === '') {
-            alert('Enter Description!');
-            return;
-        }
-
-        if (nameInput.value.length > 30) {
-            alert('Too long name! < 25 characters!')
-            return;
-        }
-
-        const namePattern = /^[A-Za-z0-9_]+$/;
-        if (!namePattern.test(nameInput.value)) {
-            alert('Enter Correct Name!');
-            return;
-        }
-
-        task = new Task(nameInput.value, descriptionTextArea.value);
-
-        const taskObject = {
-            id: task.id,
-            name: task.name,
-            description: task.description,
-            creationDate: task.creationDate,
-            isCompleted: task.isCompleted
-        }
-
-        tasks.push(taskObject);
-        taskList.addTask(taskObject);
-        localStorage.setItem(TASKS, JSON.stringify(tasks));
-        addTask(taskObject);
-        form.style.display = 'none';
-
-        changeStatus();
     })
 })
+
+function validateDescription(description) {
+    if (description.trim().length === 0) {
+        alert('Minimum 1 word in Description!');
+        return false;
+    }
+
+    return true;
+}
+
+function validateName(name) {
+    name = name.replace(/\s+/g, ' ');
+
+    const words = name.trim().split(/\s+/);
+    if (words.length < 2) {
+        alert('Minimum 2 words in Name!');
+        return false;
+    }
+
+    let err = false;
+    words.forEach(word => {
+        if (word.length > 16) {
+            alert('Words length cant be more than 16!');
+            err = true;
+        }
+    })
+    if (err) {
+        return false;
+    }
+
+    const wordRegex = /^[a-zA-Zа-яА-Я0-9]+$/;
+    words.forEach(word => {
+        if (!wordRegex.test(word)) {
+            alert('Only Dgigits, Russian/English letters')
+            return false;
+        }
+    })
+
+    const regex = /[a-zA-Zа-яА-Я]/;
+    if (!regex.test(name)) {
+        alert(`Can't be without letters!`)
+        return false; 
+    }
+
+    return true;
+}
