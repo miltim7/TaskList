@@ -83,15 +83,7 @@ class TaskList {
     filterAll() {
         ul.innerHTML = '';
         const arr = [...tasks];
-        if (sortByName.checked) {
-            arr.sort((a, b) => {
-                return a.name.localeCompare(b.name);
-            });
-        } else if (sortByDate.checked) {
-            arr.sort(function (a, b) {
-                return parseDate(a.creationDate) - parseDate(b.creationDate);
-            });
-        }
+        this.verifySort(arr);
         arr.forEach(task => {
             addTask(task);
         });
@@ -105,15 +97,7 @@ class TaskList {
                 arr.push(task);
             }
         })
-        if (sortByName.checked) {
-            arr.sort((a, b) => {
-                return a.name.localeCompare(b.name);
-            });
-        } else if (sortByDate.checked) {
-            arr.sort(function (a, b) {
-                return parseDate(a.creationDate) - parseDate(b.creationDate);
-            });
-        }
+        this.verifySort(arr);
         ul.innerHTML = '';
         arr.forEach(task => {
             addTask(task);
@@ -127,15 +111,7 @@ class TaskList {
                 arr.push(task);
             }
         })
-        if (sortByName.checked) {
-            arr.sort((a, b) => {
-                return a.name.localeCompare(b.name);
-            });
-        } else if (sortByDate.checked) {
-            arr.sort(function (a, b) {
-                return parseDate(a.creationDate) - parseDate(b.creationDate);
-            });
-        }
+        this.verifySort(arr);
         ul.innerHTML = '';
         arr.forEach(task => {
             addTask(task);
@@ -145,20 +121,7 @@ class TaskList {
 
     sortByName() {
         const arr = [...nowList()];
-        if (filterDone.checked) {
-            for (let i = 0; i < arr.length; i++) {
-                if (arr[i].isCompleted === false) {
-                    arr.splice(i, 1);
-                }
-            }
-        }
-        else if (filterRemainded.checked) {
-            for (let i = 0; i < arr.length; i++) {
-                if (arr[i].isCompleted === true) {
-                    arr.splice(i, 1);
-                }
-            }
-        }
+        this.verifyFilter(arr);
         arr.sort((a, b) => {
             return a.name.localeCompare(b.name);
         });
@@ -174,6 +137,27 @@ class TaskList {
         arr.sort(function (a, b) {
             return parseDate(a.creationDate) - parseDate(b.creationDate);
         });
+        this.verifyFilter(arr);
+        ul.innerHTML = '';
+        arr.forEach(task => {
+            addTask(task);
+        })
+        changeStatus();
+    }
+
+    verifySort(arr) {
+        if (sortByName.checked) {
+            arr.sort((a, b) => {
+                return a.name.localeCompare(b.name);
+            });
+        } else if (sortByDate.checked) {
+            arr.sort(function (a, b) {
+                return parseDate(a.creationDate) - parseDate(b.creationDate);
+            });
+        }
+    }
+
+    verifyFilter(arr) {
         if (filterDone.checked) {
             for (let i = 0; i < arr.length; i++) {
                 if (arr[i].isCompleted === false) {
@@ -188,11 +172,6 @@ class TaskList {
                 }
             }
         }
-        ul.innerHTML = '';
-        arr.forEach(task => {
-            addTask(task);
-        })
-        changeStatus();
     }
 }
 
