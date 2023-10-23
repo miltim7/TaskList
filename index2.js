@@ -78,6 +78,7 @@ class TaskList {
     }
 
     filterAll() {
+        changeStatus();
         ul.innerHTML = '';
 
         tasks.forEach(task => {
@@ -86,25 +87,57 @@ class TaskList {
     }
 
     filterRemainded() {
+        changeStatus();
         const arr = [];
-        JSON.parse(localStorage.getItem(TASKS)).forEach(task => {
-            if (task.isCompleted === false) {
+
+        tasks.forEach(task => {
+            if (task.isCompleted !== true) {
                 arr.push(task);
             }
         })
+
         ul.innerHTML = '';
+
+        if (sortByName.checked) {
+            arr.sort((a, b) => {
+                return a.name.localeCompare(b.name);
+            });
+        }
+        if (sortByDate.checked) {
+            arr.sort(function (a, b) {
+                return parseDate(a.creationDate) - parseDate(b.creationDate);
+            });
+        }
+
         arr.forEach(task => {
             addTask(task);
         });
     }
+
+
     filterDone() {
+        changeStatus();
         const arr = [];
-        JSON.parse(localStorage.getItem(TASKS)).forEach(task => {
+
+        tasks.forEach(task => {
             if (task.isCompleted === true) {
                 arr.push(task);
             }
         })
+
         ul.innerHTML = '';
+
+        if (sortByName.checked) {
+            arr.sort((a, b) => {
+                return a.name.localeCompare(b.name);
+            });
+        }
+        if (sortByDate.checked) {
+            arr.sort(function (a, b) {
+                return parseDate(a.creationDate) - parseDate(b.creationDate);
+            });
+        }
+
         arr.forEach(task => {
             addTask(task);
         });
@@ -119,6 +152,21 @@ class TaskList {
 
         ul.innerHTML = '';
 
+        if (filterDone.checked) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].isCompleted === false) {
+                    arr.splice(i, 1);
+                }
+            }
+        }
+        if (filterRemainded.checked) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].isCompleted === true) {
+                    arr.splice(i, 1);
+                }
+            }
+        }
+
         arr.forEach(task => {
             addTask(task);
         });
@@ -132,6 +180,21 @@ class TaskList {
         });
 
         ul.innerHTML = '';
+
+        if (filterDone.checked) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].isCompleted === false) {
+                    arr.splice(i, 1);
+                }
+            }
+        }
+        if (filterRemainded.checked) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].isCompleted === true) {
+                    arr.splice(i, 1);
+                }
+            }
+        }
 
         for (let i = arr.length - 1; i >= 0; i--) {
             addTask(arr[i]);
@@ -201,17 +264,15 @@ function addTask(task) {
 }
 
 function changeStatus() {
-    const radios = ul.querySelectorAll('input[type="checkbox"]');
-    radios.forEach(radio => {
-        radio.addEventListener('click', () => {
-            const id = radio.parentElement.querySelector('a').href.split('?')[1].substring(3);
-            const index = tasks.findIndex(t => t.id === id);
-
-            tasks[index].isCompleted = radio.checked;
-
-            localStorage.setItem(TASKS, JSON.stringify(tasks));
-        })
-    })
+    ul.addEventListener('change', (e) => {
+        if (e.target.classList.contains('status')) {
+            const checkboxIndex = Array.from(ul.querySelectorAll('.status')).indexOf(e.target);
+            if (checkboxIndex !== -1) {
+                tasks[checkboxIndex].isCompleted = e.target.checked;
+                localStorage.setItem(TASKS, JSON.stringify(tasks));
+            }
+        }
+    });
 }
 
 window.addEventListener('load', () => {
@@ -308,6 +369,7 @@ addTaskButton.addEventListener('click', e => {
             localStorage.setItem(TASKS, JSON.stringify(tasks));
             addTask(taskObject);
             form.style.display = 'none';
+    
             changeStatus();
         }
     })
