@@ -84,9 +84,6 @@ class TaskList {
         ul.innerHTML = '';
         const arr = [...tasks];
         this.verifySort(arr);
-        arr.forEach(task => {
-            addTask(task);
-        });
         changeStatus();
     }
 
@@ -97,11 +94,8 @@ class TaskList {
                 arr.push(task);
             }
         })
-        this.verifySort(arr);
         ul.innerHTML = '';
-        arr.forEach(task => {
-            addTask(task);
-        });
+        this.verifySort(arr);
         changeStatus();
     }
     filterDone() {
@@ -111,11 +105,8 @@ class TaskList {
                 arr.push(task);
             }
         })
-        this.verifySort(arr);
         ul.innerHTML = '';
-        arr.forEach(task => {
-            addTask(task);
-        });
+        this.verifySort(arr);
         changeStatus();
     }
 
@@ -139,9 +130,10 @@ class TaskList {
         });
         this.verifyFilter(arr);
         ul.innerHTML = '';
-        arr.forEach(task => {
-            addTask(task);
-        })
+
+        for (let i = arr.length - 1; i >= 0; i--) {
+            addTask(arr[i]);
+        }
         changeStatus();
     }
 
@@ -150,10 +142,20 @@ class TaskList {
             arr.sort((a, b) => {
                 return a.name.localeCompare(b.name);
             });
+            arr.forEach(task => {
+                addTask(task);
+            })
         } else if (sortByDate.checked) {
             arr.sort(function (a, b) {
                 return parseDate(a.creationDate) - parseDate(b.creationDate);
             });
+            for (let i = arr.length - 1; i >= 0; i--) {
+                addTask(arr[i]);
+            }
+        } else {
+            arr.forEach(task => {
+                addTask(task);
+            })
         }
     }
 
