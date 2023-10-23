@@ -1,4 +1,7 @@
 import { TASKS } from "./Assets/key.js";
+import validateDescription from "./Helper/valDescription.js";
+import validateName from "./Helper/valName.js";
+
 class Task {
     #id;
     #name;
@@ -79,64 +82,139 @@ class TaskList {
 
     filterAll() {
         ul.innerHTML = '';
-
-        tasks.forEach(task => {
+        const arr = [...tasks];
+        if (sortByName.checked) {
+            arr.sort((a, b) => {
+                return a.name.localeCompare(b.name);
+            });
+        } else if (sortByDate.checked) {
+            arr.sort(function (a, b) {
+                return parseDate(a.creationDate) - parseDate(b.creationDate);
+            });
+        }
+        arr.forEach(task => {
             addTask(task);
         });
+        changeStatus();
     }
 
     filterRemainded() {
         const arr = [];
-        JSON.parse(localStorage.getItem(TASKS)).forEach(task => {
+        tasks.forEach(task => {
             if (task.isCompleted === false) {
                 arr.push(task);
             }
         })
+        if (sortByName.checked) {
+            arr.sort((a, b) => {
+                return a.name.localeCompare(b.name);
+            });
+        } else if (sortByDate.checked) {
+            arr.sort(function (a, b) {
+                return parseDate(a.creationDate) - parseDate(b.creationDate);
+            });
+        }
         ul.innerHTML = '';
         arr.forEach(task => {
             addTask(task);
         });
+        changeStatus();
     }
     filterDone() {
         const arr = [];
-        JSON.parse(localStorage.getItem(TASKS)).forEach(task => {
+        tasks.forEach(task => {
             if (task.isCompleted === true) {
                 arr.push(task);
             }
         })
+        if (sortByName.checked) {
+            arr.sort((a, b) => {
+                return a.name.localeCompare(b.name);
+            });
+        } else if (sortByDate.checked) {
+            arr.sort(function (a, b) {
+                return parseDate(a.creationDate) - parseDate(b.creationDate);
+            });
+        }
         ul.innerHTML = '';
         arr.forEach(task => {
             addTask(task);
         });
+        changeStatus();
     }
 
     sortByName() {
-        const arr = [...tasks];
-
+        const arr = [...nowList()];
+        if (filterDone.checked) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].isCompleted === false) {
+                    arr.splice(i, 1);
+                }
+            }
+        }
+        else if (filterRemainded.checked) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].isCompleted === true) {
+                    arr.splice(i, 1);
+                }
+            }
+        }
         arr.sort((a, b) => {
             return a.name.localeCompare(b.name);
         });
-
         ul.innerHTML = '';
-
         arr.forEach(task => {
             addTask(task);
         });
+        changeStatus();
     }
 
     sortByDate() {
-        const arr = [...tasks];
-
+        const arr = [...nowList()];
         arr.sort(function (a, b) {
             return parseDate(a.creationDate) - parseDate(b.creationDate);
         });
-
+        if (filterDone.checked) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].isCompleted === false) {
+                    arr.splice(i, 1);
+                }
+            }
+        }
+        else if (filterRemainded.checked) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].isCompleted === true) {
+                    arr.splice(i, 1);
+                }
+            }
+        }
         ul.innerHTML = '';
+        arr.forEach(task => {
+            addTask(task);
+        })
+        changeStatus();
+    }
+}
 
-        for (let i = arr.length - 1; i >= 0; i--) {
-            addTask(arr[i]);
+function nowList() {
+    const arr = ul.querySelectorAll('a');
+    let ids = [];
+    let list = [];
+    arr.forEach(task => {
+        if (task.href.split('Edit').length > 1) {
+            ids.push(task.href.split('?')[1].substring(3));
+        }
+    })
+
+    for (let i = 0; i < tasks.length; i++) {
+        for (let j = 0; j < tasks.length; j++) {
+            if (tasks[i].id === ids[j]) {
+                list.push(tasks[i]);
+            }
         }
     }
+
+    return list;
 }
 
 function parseDate(dateStr) {
@@ -210,6 +288,12 @@ function changeStatus() {
             tasks[index].isCompleted = radio.checked;
 
             localStorage.setItem(TASKS, JSON.stringify(tasks));
+            if (filterDone.checked) {
+                taskList.filterDone();
+            }
+            if (filterRemainded.checked) {
+                taskList.filterRemainded();
+            }
         })
     })
 }
@@ -279,7 +363,6 @@ addTaskButton.addEventListener('click', e => {
     form.appendChild(descriptionTextArea);
     form.appendChild(saveButton);
 
-
     closeButton.addEventListener('click', () => {
         form.style.display = 'none';
     })
@@ -307,54 +390,25 @@ addTaskButton.addEventListener('click', e => {
             taskList.addTask(taskObject);
             localStorage.setItem(TASKS, JSON.stringify(tasks));
             addTask(taskObject);
+            checkFilters();
             form.style.display = 'none';
             changeStatus();
         }
     })
 })
 
-function validateDescription(description) {
-    if (description.trim().length === 0) {
-        alert('Minimum 1 word in Description!');
-        return false;
+function checkFilters() {
+    if (sortByName.checked) {
+        taskList.sortByName();
+    }
+    else if (sortByDate.checked) {
+        taskList.sortByDate();
     }
 
-    return true;
-}
-
-function validateName(name) {
-    name = name.replace(/\s+/g, ' ');
-
-    const words = name.trim().split(/\s+/);
-    if (words.length < 2) {
-        alert('Minimum 2 words in Name!');
-        return false;
+    if (filterDone.checked) {
+        taskList.filterDone();
     }
-
-    let err = false;
-    words.forEach(word => {
-        if (word.length > 16) {
-            alert('Words length cant be more than 16!');
-            err = true;
-        }
-    })
-    if (err) {
-        return false;
+    else if (filterRemainded.checked) {
+        taskList.filterRemainded();
     }
-
-    const wordRegex = /^[a-zA-Zа-яА-Я0-9]+$/;
-    words.forEach(word => {
-        if (!wordRegex.test(word)) {
-            alert('Only Dgigits, Russian/English letters')
-            return false;
-        }
-    })
-
-    const regex = /[a-zA-Zа-яА-Я]/;
-    if (!regex.test(name)) {
-        alert(`Can't be without letters!`)
-        return false; 
-    }
-
-    return true;
 }

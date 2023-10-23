@@ -1,4 +1,7 @@
 import { TASKS } from "./Assets/key.js";
+import validateDescription from "./Helper/valDescription.js";
+import validateName from "./Helper/valName.js";
+
 class Task {
     #id;
     #name;
@@ -78,127 +81,69 @@ class TaskList {
     }
 
     filterAll() {
-        changeStatus();
         ul.innerHTML = '';
 
         tasks.forEach(task => {
             addTask(task);
         });
+        changeStatus();
     }
 
     filterRemainded() {
-        changeStatus();
         const arr = [];
-
-        tasks.forEach(task => {
-            if (task.isCompleted !== true) {
+        JSON.parse(localStorage.getItem(TASKS)).forEach(task => {
+            if (task.isCompleted === false) {
                 arr.push(task);
             }
         })
-
         ul.innerHTML = '';
-
-        if (sortByName.checked) {
-            arr.sort((a, b) => {
-                return a.name.localeCompare(b.name);
-            });
-        }
-        if (sortByDate.checked) {
-            arr.sort(function (a, b) {
-                return parseDate(a.creationDate) - parseDate(b.creationDate);
-            });
-        }
-
         arr.forEach(task => {
             addTask(task);
         });
-    }
-
-
-    filterDone() {
         changeStatus();
+    }
+    filterDone() {
         const arr = [];
-
-        tasks.forEach(task => {
+        JSON.parse(localStorage.getItem(TASKS)).forEach(task => {
             if (task.isCompleted === true) {
                 arr.push(task);
             }
         })
-
         ul.innerHTML = '';
-
-        if (sortByName.checked) {
-            arr.sort((a, b) => {
-                return a.name.localeCompare(b.name);
-            });
-        }
-        if (sortByDate.checked) {
-            arr.sort(function (a, b) {
-                return parseDate(a.creationDate) - parseDate(b.creationDate);
-            });
-        }
-
         arr.forEach(task => {
             addTask(task);
         });
+        changeStatus();
     }
 
     sortByName() {
         const arr = [...tasks];
-
+        
         arr.sort((a, b) => {
             return a.name.localeCompare(b.name);
         });
-
+        
         ul.innerHTML = '';
-
-        if (filterDone.checked) {
-            for (let i = 0; i < arr.length; i++) {
-                if (arr[i].isCompleted === false) {
-                    arr.splice(i, 1);
-                }
-            }
-        }
-        if (filterRemainded.checked) {
-            for (let i = 0; i < arr.length; i++) {
-                if (arr[i].isCompleted === true) {
-                    arr.splice(i, 1);
-                }
-            }
-        }
-
+        
         arr.forEach(task => {
             addTask(task);
         });
+        changeStatus();
     }
 
     sortByDate() {
         const arr = [...tasks];
-
+        
         arr.sort(function (a, b) {
             return parseDate(a.creationDate) - parseDate(b.creationDate);
         });
-
+        
         ul.innerHTML = '';
-
-        if (filterDone.checked) {
-            for (let i = 0; i < arr.length; i++) {
-                if (arr[i].isCompleted === false) {
-                    arr.splice(i, 1);
-                }
-            }
-        }
-        if (filterRemainded.checked) {
-            for (let i = 0; i < arr.length; i++) {
-                if (arr[i].isCompleted === true) {
-                    arr.splice(i, 1);
-                }
-            }
-        }
 
         for (let i = arr.length - 1; i >= 0; i--) {
             addTask(arr[i]);
         }
+        changeStatus();
     }
 }
 
@@ -264,15 +209,23 @@ function addTask(task) {
 }
 
 function changeStatus() {
-    ul.addEventListener('change', (e) => {
-        if (e.target.classList.contains('status')) {
-            const checkboxIndex = Array.from(ul.querySelectorAll('.status')).indexOf(e.target);
-            if (checkboxIndex !== -1) {
-                tasks[checkboxIndex].isCompleted = e.target.checked;
-                localStorage.setItem(TASKS, JSON.stringify(tasks));
+    const radios = ul.querySelectorAll('input[type="checkbox"]');
+    radios.forEach(radio => {
+        radio.addEventListener('click', () => {
+            const id = radio.parentElement.querySelector('a').href.split('?')[1].substring(3);
+            const index = tasks.findIndex(t => t.id === id);
+
+            tasks[index].isCompleted = radio.checked;
+
+            localStorage.setItem(TASKS, JSON.stringify(tasks));
+            if (filterDone.checked) {
+                taskList.filterDone();
             }
-        }
-    });
+            if (filterRemainded.checked) {
+                taskList.filterRemainded();
+            }
+        })
+    })
 }
 
 window.addEventListener('load', () => {
@@ -340,7 +293,6 @@ addTaskButton.addEventListener('click', e => {
     form.appendChild(descriptionTextArea);
     form.appendChild(saveButton);
 
-
     closeButton.addEventListener('click', () => {
         form.style.display = 'none';
     })
@@ -368,55 +320,26 @@ addTaskButton.addEventListener('click', e => {
             taskList.addTask(taskObject);
             localStorage.setItem(TASKS, JSON.stringify(tasks));
             addTask(taskObject);
+            checkFilters();
             form.style.display = 'none';
-    
             changeStatus();
         }
     })
 })
 
-function validateDescription(description) {
-    if (description.trim().length === 0) {
-        alert('Minimum 1 word in Description!');
-        return false;
+function checkFilters() {
+    if (sortByName.checked) {
+        taskList.sortByName();
+    }
+    else if (sortByDate.checked) {
+        taskList.sortByDate();
     }
 
-    return true;
-}
-
-function validateName(name) {
-    name = name.replace(/\s+/g, ' ');
-
-    const words = name.trim().split(/\s+/);
-    if (words.length < 2) {
-        alert('Minimum 2 words in Name!');
-        return false;
+    if (filterDone.checked) {
+        taskList.filterDone();
     }
 
-    let err = false;
-    words.forEach(word => {
-        if (word.length > 16) {
-            alert('Words length cant be more than 16!');
-            err = true;
-        }
-    })
-    if (err) {
-        return false;
+    else if (filterRemainded.checked) {
+        taskList.filterRemainded();
     }
-
-    const wordRegex = /^[a-zA-Zа-яА-Я0-9]+$/;
-    words.forEach(word => {
-        if (!wordRegex.test(word)) {
-            alert('Only Dgigits, Russian/English letters')
-            return false;
-        }
-    })
-
-    const regex = /[a-zA-Zа-яА-Я]/;
-    if (!regex.test(name)) {
-        alert(`Can't be without letters!`)
-        return false; 
-    }
-
-    return true;
 }

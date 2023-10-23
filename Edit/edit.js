@@ -1,5 +1,8 @@
 import { TASKS } from "../Assets/key.js";
 
+import validateDescription from "../Helper/valDescription.js";
+import validateName from "../Helper/valName.js";
+
 const url = new URL(location);
 const urlSearchParams = new URLSearchParams(url.search);
 
@@ -36,7 +39,6 @@ const saveButton = document.createElement('button');
 saveButton.className = 'form-save-task';
 saveButton.textContent = 'Save Changes';
 
-
 main.appendChild(form);
 form.appendChild(div);
 form.appendChild(p);
@@ -54,18 +56,20 @@ saveButton.addEventListener('click', e => {
     e.preventDefault();
 
     if (nameInput.value === task.name && descriptionTextArea.value === task.description) {
-        console.log('nothing changed');
+        alert('Nothing changed');
         return;
     }
 
-    if (nameInput.value !== task.name && descriptionTextArea.value === task.description) {
+    if (validateName(nameInput.value) && validateDescription(descriptionTextArea.value)) {
+        if (nameInput.value === descriptionTextArea.value) {
+            alert('Name and Description can not be same!');
+            return;
+        }
+
         const index = tasks.findIndex(t => t.id == task.id);
         tasks[index].name = nameInput.value;
-    } else {
-        const index = tasks.findIndex(t => t.id == task.id);
         tasks[index].description = descriptionTextArea.value;
+        localStorage.setItem(TASKS, JSON.stringify(tasks));
+        window.history.back();
     }
-
-    localStorage.setItem(TASKS, JSON.stringify(tasks));
-    window.history.back();
 })
